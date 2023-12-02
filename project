@@ -1,0 +1,208 @@
+#include <iostream>
+#include <iomanip>
+#include <limits>
+
+using namespace std;
+
+void displayMenu()
+{
+    cout << "Menu:\n\n";
+    cout << "---Brewed Coffee--- \n\n";
+    cout << "1. Drip - 95.00 SMALL | 115.00 MEDIUM | 130.00 LARGE \n";
+    cout << "2. French Press - 110.00 SMALL | 130.00 MEDIUM | 145.00 LARGE \n\n";
+    cout << "---Espresso---\n\n";
+    cout << "3. Espresso - 105.00 SMALL | 125.00 MEDIUM | 140.00 LARGE \n";
+    cout << "4. Espresso Macchiato - 115.00 SMALL | 135.00 MEDIUM | 150.00 LARGE \n\n";
+    cout << "---Hot Coffee---\n\n";
+    cout << "5. Coffee Americano - 125.00 SMALL | 145.00 MEDIUM | 160.00 LARGE \n";
+    cout << "6. Cappuccino - 135.00 SMALL | 155.00 MEDIUM | 170.00 LARGE \n";
+    cout << "7. Caramel Mocha - 145.00 SMALL | 165.00 MEDIUM | 180.00 LARGE \n\n";
+    cout << "---Ice Blended---\n\n";
+    cout << "8. Mocha - 155.00 SMALL | 175.00 MEDIUM | 190.00 LARGE \n";
+    cout << "9. Caramel - 160.00 SMALL | 180.00 MEDIUM | 195.00 LARGE \n";
+    cout << "10. White Chocolate - 145.00 SMALL | 165.00 MEDIUM | 180.00 LARGE \n\n";	
+    cout << "11. Remove Last Item\n";
+    cout << "12. Exit\n";
+}
+struct MenuItem {
+    string name;
+    double prices[3]; // Small, Medium, Large
+};
+
+void displayMenu(MenuItem menu[], int itemCount) {
+    cout << "Menu:\n\n";
+    for (int i = 0; i < itemCount; ++i) {
+        cout << i + 1 << ". " << menu[i].name << " - ";
+        cout << "Prices: " << menu[i].prices[0] << " | " << menu[i].prices[1] << " | " << menu[i].prices[2] << endl;
+    }
+    cout << itemCount + 1 << ". Exit\n";
+}
+
+void adminMode(MenuItem menu[], int& itemCount) {
+    int adminChoice;
+    do {
+        cout << "\nAdmin Mode:\n";
+        cout << "1. Add Item\n";
+        cout << "2. Change Item Prices\n";
+        cout << "3. View Menu\n";
+        cout << "4. Exit Admin Mode\n";
+        cout << "Enter your choice (1-4): ";
+        cin >> adminChoice;
+
+        switch (adminChoice) {
+            case 1: {
+                if (itemCount >= 100) {
+                    cout << "Menu is full. Cannot add more items.\n";
+                    break;
+                }
+
+                cout << "Enter the name of the new item: ";
+                cin.ignore();
+                getline(cin, menu[itemCount].name);
+
+                cout << "Enter the prices for Small, Medium, Large (space-separated): ";
+                cin >> menu[itemCount].prices[0] >> menu[itemCount].prices[1] >> menu[itemCount].prices[2];
+
+                itemCount++;
+                cout << "Item added to the menu.\n";
+                break;
+            }
+            case 2: {
+                int index;
+                cout << "Enter the index of the item to change prices (1-" << itemCount << "): ";
+                cin >> index;
+
+                if (index < 1 || index > itemCount) {
+                    cout << "Invalid index. Please enter a valid index.\n";
+                    break;
+                }
+
+                cout << "Enter the new prices for Small, Medium, Large (space-separated): ";
+                cin >> menu[index - 1].prices[0] >> menu[index - 1].prices[1] >> menu[index - 1].prices[2];
+                cout << "Prices updated for " << menu[index - 1].name << ".\n";
+                break;
+            }
+            case 3:
+                displayMenu(menu, itemCount);
+                break;
+            case 4:
+                cout << "Exiting Admin Mode.\n";
+                break;
+            default:
+                cout << "Invalid choice. Please enter a number between 1 and 4.\n";
+                break;
+        }
+    } while (adminChoice != 4);
+}
+
+int main() {
+    MenuItem coffeeMenu[100]; // Array to store menu items
+    int itemCount = 0; // Current count of items in the menu
+
+    // Sample menu items (you can add more if needed)
+    coffeeMenu[itemCount++] = {"Drip", {95.00, 115.00, 130.00}};
+    coffeeMenu[itemCount++] = {"French Press", {110.00, 130.00, 145.00}};
+    coffeeMenu[itemCount++] = {"Espresso", {105.00, 125.00, 140.00}};
+    coffeeMenu[itemCount++] = {"Espresso Macchiato", {115.00, 135.00, 160.00}};
+    coffeeMenu[itemCount++] = {"Coffee Americano", {125.00, 145.00, 160.00}};
+    coffeeMenu[itemCount++] = {"Cappuccino", {135.00, 155.00, 170.00}};
+    coffeeMenu[itemCount++] = {"Caramel Mocha", {145.00, 165.00, 180.00}};
+    coffeeMenu[itemCount++] = {"Mocha", {155.00, 175.00, 190.00}};
+    coffeeMenu[itemCount++] = {"Caramel", {165.00, 180.00, 195.00}};
+    coffeeMenu[itemCount++] = {"White Chocolate", {145.00, 165.00, 180.00}};
+	
+    cout << "Welcome to Our Coffee Shop!\n";
+    cout << ":Press ENTER to order: ";
+
+
+    string userType;
+    getline(cin, userType);
+
+    double totalCost = 0.0;
+    double lastItemCost = 0.0;
+
+    if (userType == "admin") {
+        adminMode(coffeeMenu, itemCount);
+        goto home;
+    } else if (userType.empty()) { // Check for empty input (Enter key press)
+        int choice, size;
+        do {
+            displayMenu();
+            cout << "Enter your choice (1-12): ";
+            cin >> choice;
+            switch (choice) {
+                case 1:
+                case 2:
+                case 3:
+                case 4:
+                case 5:
+                case 6:
+                case 7:
+                case 8:
+                case 9:
+                case 10:
+                    cout << "Select size (1. Small, 2. Medium, 3. Large): ";
+                    cin >> size;
+
+                    double itemCost;
+                    switch (size)
+                    {
+                        case 1:
+                            itemCost = (choice == 1) ? 95.00 : ((choice == 2) ? 110.00 : ((choice == 3) ? 105.00 :
+                                                                                          ((choice == 4) ? 115.00 : ((choice == 5) ? 125.00 : ((choice == 6) ? 135.00 :
+                                                                                                                                               ((choice == 7) ? 145.00 : ((choice == 8) ? 155.00 : ((choice == 9) ? 160.00 : 145.00))))))));
+                            break;
+                        case 2:
+                            itemCost = (choice == 1) ? 95.00 + 20.00 : ((choice == 2) ? 110.00 + 20.00 : ((choice == 3) ? 105.00 + 20.00 :
+                                                                                                          ((choice == 4) ? 115.00 + 20.00 : ((choice == 5) ? 125.00 + 20.00 : ((choice == 6) ? 135.00 + 20.00 :
+                                                                                                                                                                               ((choice == 7) ? 145.00 + 20.00 : ((choice == 8) ? 155.00 + 20.00 : ((choice == 9) ? 160.00 + 20.00 : 145.00 + 20.00))))))));
+                            break;
+                        case 3:
+                            itemCost = (choice == 1) ? 95.00 + 35.00 : ((choice == 2) ? 110.00 + 35.00 : ((choice == 3) ? 105.00 + 35.00 :
+                                                                                                          ((choice == 4) ? 115.00 + 35.00 : ((choice == 5) ? 125.00 + 35.00 : ((choice == 6) ? 135.00 + 35.00 :
+                                                                                                                                                                               ((choice == 7) ? 145.00 + 35.00 : ((choice == 8) ? 155.00 + 35.00 : ((choice == 9) ? 160.00 + 35.00 : 145.00 + 35.00))))))));
+                            break;
+                        default:
+                            cout << "Invalid size. Please enter a number between 1 and 3.\n";
+                            continue; // Re-prompt for size selection
+                    }
+
+                    totalCost += itemCost;
+                    lastItemCost = itemCost;
+
+                    cout << "Item " << choice << " (";
+                    cout << (size == 1 ? "Small" : size == 2 ? "Medium" : "Large") << "): " << fixed << setprecision(2)
+                         << itemCost << " | Running Tally: " << totalCost << "\n\n";
+                    break;
+
+                case 11:
+                    if (totalCost > 0)
+                    {
+                        cout << "\nRemoving last item: -" << fixed << setprecision(2) << lastItemCost << "\n";
+                        totalCost -= lastItemCost;
+                    } else
+                    {
+                        cout << "\nNo items to remove.\n";
+                    }
+                    break;
+                case 12:
+                    cout << "\nExiting the program.\n";
+                    break;
+                default:
+                    cout << "\nInvalid choice. Please enter a number between 1 and 12.\n";
+                    break;
+
+            }}
+        while (choice != 12);
+
+    } else {
+            cout << "Invalid choice. Please choose 'admin' or press Enter for Guest.\n";
+        }
+
+    cout << "\nOrder Tally:\n";
+
+    cout << "\nFinal Total Cost: " << totalCost << endl;
+
+    return 0;
+}
+
